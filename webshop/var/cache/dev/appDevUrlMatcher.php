@@ -109,6 +109,23 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
             return array (  '_controller' => 'AppBundle\\Controller\\DefaultController::indexAction',  '_route' => 'homepage',);
         }
 
+        if (0 === strpos($pathinfo, '/test')) {
+            // app_test_index
+            if (rtrim($pathinfo, '/') === '/test') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'app_test_index');
+                }
+
+                return array (  '_controller' => 'AppBundle\\Controller\\TestController::indexAction',  '_route' => 'app_test_index',);
+            }
+
+            // app_test_new
+            if (preg_match('#^/test/(?P<page>[^/]++)/new$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'app_test_new')), array (  '_controller' => 'AppBundle\\Controller\\TestController::newAction',));
+            }
+
+        }
+
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();
     }
 }
